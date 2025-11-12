@@ -1,12 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { CulturalAnalysis } from '@/components/cultural-analysis'
 import { useTranslation } from '@/hooks/use-translation'
@@ -290,33 +283,33 @@ export default function Home() {
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium text-foreground">Tradução Cultural</label>
                     <div className="flex items-center gap-2">
-                      {translatedText && (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleCopy}
-                            className="h-8 px-2 hover:bg-accent"
-                          >
-                            {copied ? (
-                              <CheckCircle className="w-4 h-4 text-green-500" />
-                            ) : (
-                              <Copy className="w-4 h-4" />
-                            )}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 px-2 hover:bg-accent"
-                            onClick={() => {
-                              const analysisElement = document.getElementById('cultural-analysis')
-                              analysisElement?.scrollIntoView({ behavior: 'smooth' })
-                            }}
-                          >
-                            <BookOpen className="w-4 h-4" />
-                          </Button>
-                        </>
-                      )}
+                  {translatedText && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleCopy}
+                        className="h-8 px-2 hover:bg-accent"
+                      >
+                        {copied ? (
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2 hover:bg-accent"
+                        onClick={() => {
+                          const analysisElement = document.getElementById('cultural-analysis')
+                          analysisElement?.scrollIntoView({ behavior: 'smooth' })
+                        }}
+                      >
+                        <BookOpen className="w-4 h-4" />
+                      </Button>
+                    </>
+                  )}
                       <Button
                         variant="ghost"
                         size="sm"

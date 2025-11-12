@@ -40,41 +40,67 @@ export async function POST(request: NextRequest) {
     const sourceLanguage = languageMap[source_lang] || source_lang
     const targetLanguage = languageMap[target_lang] || target_lang
 
-    // Contextos culturais específicos
+    // Contextos culturais específicos em formato JSON
     const culturalContexts = {
-      general: 'tradução padrão para uso cotidiano',
-      formal: 'contexto profissional, acadêmico ou empresarial',
-      casual: 'conversação informal com amigos e familiares',
-      academic: 'pesquisas, artigos científicos e conteúdo educacional',
-      creative: 'literatura, poesia, música e expressão artística',
-      technical: 'documentação técnica, manuais e especializada'
+      general: {
+        description: 'tradução padrão para uso cotidiano',
+        instructions: 'Use linguagem neutra e padrão'
+      },
+      formal: {
+        description: 'contexto FORMAL e profissional',
+        instructions: 'Use linguagem polida, respeitosa e empresarial. Mantenha o mesmo nível de formalidade do texto original. Ex: "Solicitamos a gentileza" → "We kindly request" ou "Please RSVP" (mantendo formalidade)'
+      },
+      casual: {
+        description: 'conversação informal com amigos e familiares',
+        instructions: 'Use linguagem casual, natural e descontraída'
+      },
+      academic: {
+        description: 'pesquisas, artigos científicos e conteúdo educacional',
+        instructions: 'Use terminologia precisa, formal e acadêmica'
+      },
+      creative: {
+        description: 'literatura, poesia, música e expressão artística',
+        instructions: 'Preserve elementos artísticos, emocionais e criativos'
+      },
+      technical: {
+        description: 'documentação técnica, manuais e especializada',
+        instructions: 'Use terminologia técnica especializada e precisa'
+      }
     }
 
-    const contextDescription = culturalContexts[cultural_context as keyof typeof culturalContexts] || cultural_contexts.general
+    const contextConfig = culturalContexts[cultural_context as keyof typeof culturalContexts] || culturalContexts.general
 
-    const prompt = `Traduza o seguinte texto de ${sourceLanguage} para ${targetLanguage}.
+    const promptData = {
+      task: "translate",
+      source_language: sourceLanguage,
+      target_language: targetLanguage,
+      cultural_context: {
+        type: cultural_context,
+        description: contextConfig.description,
+        instructions: contextConfig.instructions
+      },
+      text: text,
+      output_format: {
+        type: "json",
+        structure: {
+          cultural_translation: "tradução culturalmente adaptada",
+          literal_translation: "tradução literal direta", 
+          cultural_notes: "explicação detalhada das adaptações culturais feitas, incluindo expressões idiomáticas, referências culturais e justificativas das mudanças"
+        }
+      }
+    }
 
-CONTEXTO CULTURAL ESPECÍFICO: ${contextDescription.toUpperCase()}
+    const prompt = `Você é um tradutor profissional especializado em tradução cultural e contextual.
 
-Instruções importantes:
-1. Adapte a tradução ao contexto cultural especificado
-2. Considere as nuances culturais, sociais e situacionais
-3. Use o tom e registro apropriados para o contexto
-4. Mantenha o significado original, mas adapte a forma
-5. Para contexto formal: use linguagem polida e profissional
-6. Para contexto informal: use linguagem casual e natural
-7. Para contexto acadêmico: use terminologia precisa e formal
-8. Para contexto criativo: preserve elementos artísticos e emocionais
-9. Para contexto técnico: use terminologia especializada correta
+TAREFA: ${JSON.stringify(promptData, null, 2)}
 
-Texto original: ${text}
+INSTRUÇÕES:
+1. Traduza o texto considerando o contexto cultural especificado
+2. Adapte a tradução às instruções do contexto cultural
+3. Mantenha o significado original mas ajuste a forma conforme necessário
+4. Forneça análise detalhada das adaptações culturais
 
-Forneça a resposta no seguinte formato JSON:
-{
-  "cultural_translation": "tradução culturalmente adaptada",
-  "literal_translation": "tradução literal direta",
-  "cultural_notes": "explicação detalhada das adaptações culturais feitas, incluindo expressões idiomáticas, referências culturais e justificativas das mudanças"
-}`
+IMPORTANTE: Responda APENAS com JSON válido no formato especificado, sem texto adicional.`
 
     const response = await fetch(DEEPSEEK_API_URL, {
       method: 'POST',
